@@ -1,5 +1,3 @@
-document.querySelector("#message").textContent = "Hello world!";
-
-document.querySelector("#eventButton").onmousemove = function() {
+document.querySelector("p").onmousemove = function() {
     console.warn("Nazar");
 };
