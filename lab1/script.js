@@ -1,3 +1,4 @@
-document.querySelector("p").onmousemove = function() {
-    console.warn("Nazar");
+document.querySelector("#pp").onmousemove = function() {
+    alert
+    ("Nazar");
 };
