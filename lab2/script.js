@@ -75,15 +75,10 @@ console.log(getGradeDescription(49));
 //3
 
 function getSeason(month) {
-    if (month >= 3 && month <= 5) {
-        return "Spring";
-    } else if (month >= 6 && month <= 8) {
-        return "Summer";
-    } else if (month >= 9 && month <= 11) {
-        return "Autumn";
-    } else {
-        return "Winter";
-    }
+   return (month >= 3 && month <= 5)?
+       "Spring":(month >= 6 && month <= 8)?
+           "Summer":(month >= 9 && month <= 11)?
+               "Autumn":"Winter";
 }
 console.log(`Result of 3.3(4,7,10,12):`);
 console.log(getSeason(4));
