@@ -11,8 +11,11 @@ function sum(){
 console.log('Sum of first 50 natural:', sum());
 
 function factorial(number){
-    if(number === 1 || number === 0) return 1;
-    else return number*factorial(number-1);
+    let factorial = 1;
+    for (let i = 1; i <= number; i++){
+        factorial *= i;
+    }
+    return factorial;
 }
 
 let number = parseInt(prompt("Enter number to give factorial:"));
