@@ -1,6 +1,6 @@
 // Task 1
 function task1() {
-    console.log("=== Task 1 ===");
+    console.log("Task 1");
     const initialFruits = ["apple", "banana", "orange", "kiwi", "pear"];
 
     let fruitsStep1 = [...initialFruits];
@@ -22,7 +22,7 @@ function task1() {
 
 // Task 2
 function task2() {
-    console.log("=== Task 2 ===");
+    console.log("Task 2");
     let colors = ["red", "blue", "green", "light blue", "yellow", "dark blue"];
 
     let longest = colors.reduce((a, b) => a.length > b.length ? a : b);
@@ -38,25 +38,28 @@ function task2() {
 
 // Task 3
 function task3() {
-    console.log("=== Task 3 ===");
-    let employees = [
+    console.log("Task 3");
+    const initialEmployees = [
         { name: "John", age: 32, position: "developer" },
         { name: "Alice", age: 28, position: "designer" },
         { name: "Bob", age: 35, position: "manager" },
         { name: "Eve", age: 30, position: "developer" }
     ];
 
-    employees.sort((a, b) => a.name.localeCompare(b.name));
-    console.log("1. Sorted by name:", employees);
+    let sortedEmployees = [...initialEmployees];
+    sortedEmployees.sort((a, b) => a.name.localeCompare(b.name));
+    console.log("1. Sorted by name:", sortedEmployees);
 
-    const developers = employees.filter(emp => emp.position === "developer");
+    const developers = initialEmployees.filter(emp => emp.position === "developer");
     console.log("2. Developers:", developers);
 
-    employees = employees.filter(emp => emp.age <= 30);
-    console.log("3. After removing employees over 30:", employees);
+    let youngEmployees = [...initialEmployees];
+    youngEmployees = youngEmployees.filter(emp => emp.age <= 30);
+    console.log("3. After removing employees over 30:", youngEmployees);
 
-    employees.push({ name: "Mike", age: 25, position: "intern" });
-    console.log("4. After adding new employee:", employees);
+    let extendedEmployees = [...initialEmployees];
+    extendedEmployees.push({ name: "Mike", age: 25, position: "intern" });
+    console.log("4. After adding new employee:", extendedEmployees);
 }
 
 // Task 4
