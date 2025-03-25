@@ -64,27 +64,28 @@ function task3() {
 
 // Task 4
 function task4() {
-    console.log("Task 4");
-    let students = [
+    console.log("=== Task 4 ===");
+    const initialStudents = [
         { name: "John", age: 20, course: 2 },
         { name: "Alex", age: 22, course: 3 },
         { name: "Anna", age: 19, course: 1 },
         { name: "Mike", age: 21, course: 4 }
     ];
+    console.log("Original students:", initialStudents);
 
-    // Remove student named "Alex"
-    students = students.filter(student => student.name !== "Alex");
-    console.log("1. After removing Alex:", students);
+    let withoutAlex = initialStudents.filter(student => student.name !== "Alex");
+    console.log("1. After removing Alex:", withoutAlex);
 
-    // Add new student
-    students.push({ name: "Sarah", age: 23, course: 3 });
-    console.log("2. After adding Sarah:", students);
+    let withSarah = [...initialStudents];
+    withSarah.push({ name: "Sarah", age: 23, course: 3 });
+    console.log("2. After adding Sarah:", withSarah);
 
-    students.sort((a, b) => b.age - a.age);
-    console.log("3. Sorted by age (descending):", students);
+    let sortedByAge = [...initialStudents];
+    sortedByAge.sort((a, b) => b.age - a.age);
+    console.log("3. Sorted by age (descending):", sortedByAge);
 
-    const thirdCourseStudent = students.find(student => student.course === 3);
-    console.log("4. Student on 3rd course:", thirdCourseStudent);
+    const thirdCourseStudent = initialStudents.find(student => student.course === 3);
+    console.log("4. Student on 3rd course (from original):", thirdCourseStudent);
 }
 
 // Task 5
@@ -92,26 +93,21 @@ function task5() {
     console.log("Task 5");
     let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    // Square each number
     const squared = numbers.map(num => num * num);
     console.log("1. Squared numbers:", squared);
 
-    // Filter even numbers
     const evens = numbers.filter(num => num % 2 === 0);
     console.log("2. Even numbers:", evens);
 
-    // Sum of all numbers
     const sum = numbers.reduce((acc, num) => acc + num, 0);
     console.log("3. Sum of numbers:", sum);
 
-    // Add new array to the beginning
-    const newNumbers = [11, 12, 13, 14, 15];
-    numbers = [...newNumbers, ...numbers];
-    console.log("4. After adding new numbers:", numbers);
+    const newArrNumbers = [11, 12, 13, 14, 15];
+    const newNumbers = [...newArrNumbers, ...numbers];
+    console.log("4. After adding new numbers:", newNumbers);
 
-    // Remove first 3 elements
-    numbers.splice(0, 3);
-    console.log("5. After removing first 3 elements:", numbers);
+    const splicedNumbers =numbers.splice(0, 3);
+    console.log("5. After removing first 3 elements:", splicedNumbers);
 }
 
 // Task 6
