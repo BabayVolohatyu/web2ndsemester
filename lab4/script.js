@@ -1,19 +1,23 @@
 // Task 1
 function task1() {
     console.log("=== Task 1 ===");
-    let fruits = ["apple", "banana", "orange", "kiwi", "pear"];
+    const initialFruits = ["apple", "banana", "orange", "kiwi", "pear"];
 
-    fruits.pop();
-    console.log("1. After removing last element:", fruits);
+    let fruitsStep1 = [...initialFruits];
+    fruitsStep1.pop();
+    console.log("1. Original:", initialFruits);
+    console.log("   After removing last element:", fruitsStep1);
 
-    fruits.unshift("pineapple");
-    console.log("2. After adding pineapple:", fruits);
+    let fruitsStep2 = [...initialFruits];
+    fruitsStep2.unshift("pineapple");
+    console.log("2. After adding pineapple:", fruitsStep2);
 
-    fruits.sort().reverse();
-    console.log("3. Sorted in reverse order:", fruits);
+    let fruitsStep3 = [...initialFruits];
+    fruitsStep3.sort().reverse();
+    console.log("3. Sorted in reverse order:", fruitsStep3);
 
-    const appleIndex = fruits.indexOf("apple");
-    console.log("4. Index of 'apple':", appleIndex);
+    const appleIndex = initialFruits.indexOf("apple");
+    console.log("4. Index of 'apple' in original array:", appleIndex);
 }
 
 // Task 2
