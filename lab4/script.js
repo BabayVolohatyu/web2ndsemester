@@ -64,7 +64,7 @@ function task3() {
 
 // Task 4
 function task4() {
-    console.log("=== Task 4 ===");
+    console.log("Task 4");
     const initialStudents = [
         { name: "John", age: 20, course: 2 },
         { name: "Alex", age: 22, course: 3 },
