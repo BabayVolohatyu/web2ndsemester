@@ -165,14 +165,13 @@ function task6() {
             totalBooks,
             availableBooks,
             borrowedBooks,
-            avgPages: Math.round(avgPages * 100) / 100
+            avgPages
         };
 
         console.log("Library statistics:", stats);
         return stats;
     }
 
-    // Test all functions
     addBook("New Book", "Author3", "Fantasy", 250);
     removeBook("Book2");
     findBooksByAuthor("Author1");
@@ -191,10 +190,8 @@ function task7() {
     };
 
     student.subjects = ["Math", "Physics", "Literature"];
-    console.log("1. After adding subjects:", student);
-
     delete student.age;
-    console.log("2. After removing age:", student);
+    console.log("After removing age and adding subjects:", student);
 }
 
 function executeAllTasks() {
