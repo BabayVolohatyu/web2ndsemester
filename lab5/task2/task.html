@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task2</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .traffic-light {
+            width: 100px;
+            height: 300px;
+            margin: 30px auto;
+            background-color: black;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #555;
+            margin: 0 auto;
+            transition: background-color 0.5s;
+        }
+
+        .red.active {
+            background-color: red;
+        }
+
+        .yellow.active {
+            background-color: yellow;
+        }
+
+        .green.active {
+            background-color: lime;
+        }
+
+        #stateText {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="traffic-light">
+    <div id="red" class="light red"></div>
+    <div id="yellow" class="light yellow"></div>
+    <div id="green" class="light green"></div>
+</div>
+
+<div id="stateText">State: -</div>
+
+<button id="setDurations">Set durations</button>
+<button id="nextBtn">Next state</button>
+
+<script>
+    const redLight = document.getElementById('red');
+    const yellowLight = document.getElementById('yellow');
+    const greenLight = document.getElementById('green');
+    const stateText = document.getElementById('stateText');
+    const nextBtn = document.getElementById('nextBtn');
+    const setDurationsBtn = document.getElementById('setDurations');
+
+    let durations = {
+        red: 5000,
+        yellow: 3000,
+        green: 7000,
+        blinking: 300
+    };
+
+    let states = ['red', 'yellow', 'green', 'blinkingYellow'];
+    let currentStateIndex = 0;
+    let intervalId;
+
+    function setState(state) {
+        redLight.classList.remove('active');
+        yellowLight.classList.remove('active');
+        greenLight.classList.remove('active');
+
+        switch (state) {
+            case 'red':
+                redLight.classList.add('active');
+                stateText.textContent = 'State: red';
+                break;
+            case 'yellow':
+                yellowLight.classList.add('active');
+                stateText.textContent = 'State: yellow';
+                break;
+            case 'green':
+                greenLight.classList.add('active');
+                stateText.textContent = 'State: green';
+                break;
+            case 'blinkingYellow':
+                blinkYellow(3);
+                return;
+        }
+
+        clearTimeout(intervalId);
+        let time = durations[state];
+        intervalId = setTimeout(() => {
+            nextState();
+        }, time);
+    }
+
+    function blinkYellow(times) {
+        let count = 0;
+        let on = false;
+        clearInterval(intervalId);
+        intervalId = setInterval(() => {
+            yellowLight.classList.toggle('active');
+            stateText.textContent = 'State: yellow (blinking)';
+            on = !on;
+            if (on) count++;
+            if (count >= times) {
+                clearInterval(intervalId);
+                currentStateIndex = 0;
+                setState(states[currentStateIndex]);
+            }
+        }, durations.blinking);
+    }
+
+    function nextState() {
+        currentStateIndex = (currentStateIndex + 1) % states.length;
+        setState(states[currentStateIndex]);
+    }
+
+    nextBtn.addEventListener('click', () => {
+        clearTimeout(intervalId);
+        nextState();
+    });
+
+    setDurationsBtn.addEventListener('click', () => {
+        const r = parseInt(prompt('Red light duration (ms):', durations.red));
+        const y = parseInt(prompt('Yellow light duration (ms):', durations.yellow));
+        const g = parseInt(prompt('Green light duration (ms):', durations.green));
+        if (!isNaN(r)) durations.red = r;
+        if (!isNaN(y)) durations.yellow = y;
+        if (!isNaN(g)) durations.green = g;
+        alert('Durations updated!');
+    });
+
+    setState(states[currentStateIndex]);
+</script>
+</body>
+</html>
