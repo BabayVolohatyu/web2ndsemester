@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task3</title>
+  <style>
+    .clock {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .blinking {
+      opacity: 1;
+    }
+
+    .hidden {
+      opacity: 0;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="section">
+  <h2>1. Digital Clock</h2>
+  <div id="clock" class="clock"></div>
+</div>
+
+<div class="section">
+  <h2>2. Countdown Timer</h2>
+  <input type="datetime-local" id="countdownInput">
+  <button onclick="startCountdown()">Start Countdown</button>
+  <div id="countdownResult"></div>
+</div>
+
+<div class="section">
+  <h2>3. Calendar</h2>
+  <input type="month" id="calendarInput" onchange="updateCalendar()">
+  <div id="calendarDisplay"></div>
+</div>
+
+<div class="section">
+  <h2>4. Time Until Your Birthday</h2>
+  <input type="date" id="birthdayInput">
+  <button onclick="calculateBirthday()">Calculate</button>
+  <div id="birthdayResult"></div>
+</div>
+
+<script>
+
+
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours().toString().padStart(2, '0'); 
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let seconds = now.getSeconds().toString().padStart(2, '0');
+    document.getElementById("clock").textContent = `${hours}:${minutes}:${seconds}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+
+
+  let countdownInterval;
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    const target = new Date(document.getElementById("countdownInput").value);
+    countdownInterval = setInterval(() => {
+      const now = new Date();
+      let diff = target - now;
+      if (diff <= 0) {
+        document.getElementById("countdownResult").textContent = "Time's up!";
+        clearInterval(countdownInterval);
+        return;
+      }
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      let minutes = Math.floor((diff / (1000 * 60)) % 60);
+      let seconds = Math.floor((diff / 1000) % 60);
+      document.getElementById("countdownResult").textContent =
+              `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
+    }, 1000);
+  }
+
+
+
+  function updateCalendar() {
+    const input = document.getElementById("calendarInput").value;
+    const [year, month] = input.split("-");
+    const date = new Date(year, month - 1);
+    const options = { month: 'long', year: 'numeric' };
+    document.getElementById("calendarDisplay").textContent = date.toLocaleDateString('en-US', options);
+  }
+
+
+
+  function calculateBirthday() {
+    const input = new Date(document.getElementById("birthdayInput").value);
+    const now = new Date();
+    const nextBirthday = new Date(now.getFullYear(), input.getMonth(), input.getDate());
+
+    if (nextBirthday < now) {
+      nextBirthday.setFullYear(now.getFullYear() + 1);
+    }
+
+    let diff = nextBirthday - now;
+
+    let months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44)); // approx
+    let days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30.44);
+    let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    let minutes = Math.floor((diff / (1000 * 60)) % 60);
+    let seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("birthdayResult").textContent =
+            `Time until your birthday: ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+  }
+</script>
+
+</body>
+</html>
