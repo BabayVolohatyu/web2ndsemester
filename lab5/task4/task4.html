@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task4</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 8px;
+            width: 200px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        #users-table {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #users-table, th, td {
+            border: 1px solid #ddd;
+        }
+        #users-table th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Online Store Inventory</h1>
+
+<div class="form-group">
+    <h3>Add Product</h3>
+    <input type="number" id="product-id" placeholder="Product ID" required>
+    <input type="text" id="product-name" placeholder="Product Name" required>
+    <input type="number" id="product-price" placeholder="Price" required>
+    <input type="number" id="product-stock" placeholder="Stock" required>
+    <button onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="form-group">
+    <h3>Update Product</h3>
+    <input type="number" id="update-id" placeholder="Product ID" required>
+    <input type="number" id="update-price" placeholder="New Price" required>
+    <input type="number" id="update-stock" placeholder="New Stock" required>
+    <button onclick="updateProduct()">Update Product</button>
+</div>
+<div class="form-group">
+    <h3>View Product History</h3>
+    <input type="number" id="history-id" placeholder="Product ID">
+    <button onclick="viewHistory()">View History</button>
+</div>
+<div class="form-group">
+    <h3>Search Product</h3>
+    <input type="text" id="search-name" placeholder="Product Name" required>
+    <button onclick="searchProduct()">Search</button>
+</div>
+
+<div class="form-group">
+    <h3>Place Order</h3>
+    <input type="number" id="order-product-id" placeholder="Product ID" required>
+    <input type="number" id="order-quantity" placeholder="Quantity" required>
+    <input type="text" id="order-user" placeholder="Your Name" required>
+    <button onclick="placeOrder()">Place Order</button>
+</div>
+<h3>Product List</h3>
+<table id="product-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script>
+    class Product {
+        constructor(id, name, price, stock) {
+            this.id = id;
+            this.name = name;
+            this.price = price;
+            this.stock = stock;
+        }
+    }
+
+    class Store {
+        constructor() {
+            this.products = new Map();
+            this.orders = new Set();
+            this.history = new WeakMap();
+            this.users = new WeakSet();
+        }
+
+        addProduct(id, name, price, stock) {
+            if (this.products.has(id)) {
+                alert("Product with this ID already exists.");
+                return;
+            }
+            const product = new Product(id, name, price, stock);
+            this.products.set(id, product);
+            alert(`Product added: ${name}`);
+            this.displayProducts();
+        }
+
+        updateProduct(id, newPrice, newStock) {
+            console.log("Updating product:", id, newPrice, newStock);  // Перевірка перед оновленням
+            if (this.products.has(id)) {
+                const product = this.products.get(id);
+                console.log("Product found:", product);  // Перевірка, чи продукт існує
+                product.price = newPrice;
+                product.stock = newStock;
+                this.recordHistory(product);
+                alert(`Product updated: ${product.name}`);
+                this.displayProducts();
+            } else {
+                alert("Product not found.");
+            }
+        }
+
+        recordHistory(product) {
+            const changes = this.history.get(product) || [];
+            console.log("Saving history for:", product.name);
+            changes.push({ price: product.price, stock: product.stock, timestamp: new Date() });
+            this.history.set(product, changes);
+        }
+
+        getProductHistory(id) {
+            const product = this.products.get(id);
+            if (!product) {
+                alert("Product not found.");
+                return;
+            }
+
+            const history = this.history.get(product);
+            if (!history) {
+                alert("No history available.");
+                return;
+            }
+
+            let message = `History for ${product.name}:\n`;
+            history.forEach(h => {
+                message += `Price: ${h.price}, Stock: ${h.stock}, Time: ${h.timestamp}\n`;
+            });
+
+            alert(message);
+        }
+
+        searchProduct(name) {
+            const results = [];
+            this.products.forEach((product) => {
+                if (product.name.toLowerCase().includes(name.toLowerCase())) {
+                    results.push(product);
+                }
+            });
+            return results.length > 0 ? results : "No products found.";
+        }
+
+        placeOrder(productId, quantity, user) {
+            if (this.products.has(productId)) {
+                const product = this.products.get(productId);
+                if (product.stock >= quantity) {
+                    product.stock -= quantity;
+                    const orderId = `${productId}-${Date.now()}`;
+                    this.orders.add(orderId);
+                    this.users.add(user);
+                    alert(`Order placed for ${quantity} units of ${product.name}.`);
+                    this.displayProducts();
+                } else {
+                    alert("Not enough stock available.");
+                }
+            } else {
+                alert("Product not found.");
+            }
+        }
+
+        displayProducts() {
+            const tableBody = document.getElementById("product-table").getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = "";
+            this.products.forEach((product) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = product.id;
+                row.insertCell(1).textContent = product.name;
+                row.insertCell(2).textContent = product.price;
+                row.insertCell(3).textContent = product.stock;
+            });
+        }
+    }
+
+    const store = new Store();
+
+    function addProduct() {
+        const id = document.getElementById("product-id").value;
+        const name = document.getElementById("product-name").value;
+        const price = document.getElementById("product-price").value;
+        const stock = document.getElementById("product-stock").value;
+        store.addProduct(parseInt(id), name, parseFloat(price), parseInt(stock));
+    }
+
+    function updateProduct() {
+        const id = document.getElementById("update-id").value;
+        const price = document.getElementById("update-price").value;
+        const stock = document.getElementById("update-stock").value;
+        store.updateProduct(parseInt(id), parseFloat(price), parseInt(stock));
+    }
+
+    function searchProduct() {
+        const name = document.getElementById("search-name").value;
+        const results = store.searchProduct(name);
+        if (typeof results === "string") {
+            alert(results);
+        } else {
+            alert(`Found: ${results.map(product => `${product.name}, Price: ${product.price}, Stock: ${product.stock}`).join("\n")}`);
+        }
+    }
+
+    function placeOrder() {
+        const productId = document.getElementById("order-product-id").value;
+        const quantity = document.getElementById("order-quantity").value;
+        const user = { name: document.getElementById("order-user").value };
+        store.placeOrder(parseInt(productId), parseInt(quantity), user);
+    }
+    function viewHistory() {
+        const id = parseInt(document.getElementById("history-id").value);
+        store.getProductHistory(id);
+    }
+</script>
+</body>
+</html>
