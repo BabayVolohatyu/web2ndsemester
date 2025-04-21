@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Task1</title>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        img {
+            background-color: yellow;
+        }
+
+        .off {
+            opacity: 0.1;
+        }
+
+        .led {
+            background-color: blue;
+        }
+
+        .eco {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+<select id="typeSelector">
+    <option value="default">Default</option>
+    <option value="eco">Eco</option>
+    <option value="led">LED</option>
+</select>
+
+<br><br>
+
+<button id="toggleBtn">On</button>
+<button id="brightnessBtn">SetBrightness</button>
+
+<br><br>
+
+<img id="bulb" src="pngimg.com%20-%20bulb_PNG1243.png" alt="Bulb" class="off bright-100">
+
+<script>
+    const bulb = document.getElementById('bulb');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const brightnessBtn = document.getElementById('brightnessBtn');
+    const typeSelector = document.getElementById('typeSelector');
+
+    let isOn = false;
+    let timeoutId;
+
+    function resetTimeout() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            bulb.classList.add('off');
+            isOn = false;
+            toggleBtn.textContent = 'Off';
+        }, 10000);
+    }
+
+    function updateBulbType() {
+        bulb.classList.remove('led', 'eco');
+        const selected = typeSelector.value;
+        if (selected === 'led') bulb.classList.add('led');
+        if (selected === 'eco') bulb.classList.add('eco');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        isOn = !isOn;
+        bulb.classList.toggle('off', !isOn);
+        toggleBtn.textContent = isOn ? 'Off' : 'On';
+        updateBulbType();
+        resetTimeout();
+    });
+
+    typeSelector.addEventListener('change', () => {
+        updateBulbType();
+        resetTimeout();
+    });
+
+    brightnessBtn.addEventListener('click', () => {
+        let value = prompt('Choose brightness: ');
+        let brightnessValue = parseInt(value);
+        if (!isNaN(brightnessValue) && brightnessValue >= 0 && brightnessValue <= 100) {
+            bulb.style.filter = `brightness(${brightnessValue}%)`;
+        } else {
+            alert('Between 0 and 100');
+        }
+        resetTimeout();
+    });
+
+    document.addEventListener('mousemove', resetTimeout);
+    document.addEventListener('click', resetTimeout);
+
+    resetTimeout();
+</script>
+</body>
+</html>
