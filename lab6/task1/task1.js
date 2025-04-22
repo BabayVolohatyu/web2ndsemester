@@ -8,18 +8,26 @@ const totalPriceEl = document.getElementById('total-price');
 
 let products = [];
 
-function renderProducts() {
-    productList.innerHTML = '';
+function renderProducts(products, productList, emptyMessage) {
+    const updatedProductList = generateProductListHTML(products);
+    productList.innerHTML = updatedProductList.html;
+
     if (products.length === 0) {
         productList.classList.add('empty');
         emptyMessage.style.display = 'block';
     } else {
         productList.classList.remove('empty');
         emptyMessage.style.display = 'none';
-        products.forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
+    }
+
+    return updatedProductList;
+}
+
+function generateProductListHTML(products) {
+    let html = '';
+    products.forEach(product => {
+        html += `
+            <div class="card">
                 <p>ID: ${product.id}</p>
                 <h3>${product.name}</h3>
                 <p>Price: $${product.price}</p>
@@ -27,40 +35,28 @@ function renderProducts() {
                 <img src="${product.image}" alt="${product.name}">
                 <button class="edit-btn">Edit</button>
                 <button class="delete-btn">Delete</button>
-            `;
-            card.querySelector('.delete-btn').onclick = () => deleteProduct(product.id);
-            card.querySelector('.edit-btn').onclick = () => openEditModal(product);
-            productList.appendChild(card);
-        });
-    }
-
-    updateTotalPrice();
+            </div>
+        `;
+    });
+    return { html };
 }
 
-function updateTotalPrice() {
+function updateTotalPrice(products) {
     const total = products.reduce((sum, p) => sum + parseFloat(p.price), 0);
-    totalPriceEl.textContent = `Total: $${total.toFixed(2)}`;
+    return `Total: $${total.toFixed(2)}`;
 }
 
-function showToast(message) {
-    toast.textContent = message;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 3000);
+function deleteProduct(id, products) {
+    return products.filter(p => p.id !== id);
 }
 
-function deleteProduct(id) {
-    products = products.filter(p => p.id !== id);
-    renderProducts();
-    showToast('Product deleted successfully.');
-}
-
-function openAddModal() {
+function openAddModal(form, modal) {
     form.reset();
     form['product-id'].value = '';
     modal.classList.remove('hidden');
 }
 
-function openEditModal(product) {
+function openEditModal(product, form, modal) {
     form['product-id'].value = product.id;
     form['product-name'].value = product.name;
     form['product-price'].value = product.price;
@@ -68,7 +64,7 @@ function openEditModal(product) {
     modal.classList.remove('hidden');
 }
 
-form.onsubmit = (e) => {
+function handleSubmit(e, form, products, modal) {
     e.preventDefault();
     const id = form['product-id'].value || Date.now().toString();
     const name = form['product-name'].value;
@@ -77,25 +73,32 @@ form.onsubmit = (e) => {
     const fileInput = form['product-image'];
 
     readImageFromFile(fileInput, (imageData) => {
-        const existingIndex = products.findIndex(p => p.id === id);
-        const product = { id, name, price, category, image: imageData };
-        if (existingIndex >= 0) {
-            products[existingIndex] = product;
-            showToast(`Product updated: ${id} - ${name}`);
-        } else {
-            products.push(product);
-            showToast('Product added successfully.');
-        }
-        renderProducts();
+        const updatedProducts = updateProductList(id, name, price, category, imageData, products);
+        renderProducts(updatedProducts, productList, emptyMessage);
+        const toastMessage = updatedProducts.some(p => p.id === id) ? `Product updated: ${id} - ${name}` : 'Product added successfully.';
+        updateToast(toastMessage);
         modal.classList.add('hidden');
     });
-};
+}
 
-document.getElementById('cancel-btn').onclick = () => {
-    modal.classList.add('hidden');
-};
+function updateProductList(id, name, price, category, imageData, products) {
+    const existingIndex = products.findIndex(p => p.id === id);
+    const updatedProduct = { id, name, price, category, image: imageData };
 
-addBtn.onclick = openAddModal;
+    if (existingIndex >= 0) {
+        products[existingIndex] = updatedProduct;
+    } else {
+        products.push(updatedProduct);
+    }
+
+    return [...products];
+}
+
+function updateToast(message) {
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+}
 
 function readImageFromFile(input, callback) {
     const file = input.files[0];
@@ -107,4 +110,28 @@ function readImageFromFile(input, callback) {
     reader.readAsDataURL(file);
 }
 
-renderProducts();
+addBtn.onclick = () => openAddModal(form, modal);
+
+document.getElementById('cancel-btn').onclick = () => modal.classList.add('hidden');
+
+form.onsubmit = (e) => handleSubmit(e, form, products, modal);
+
+
+productList.addEventListener('click', (event) => {
+    if (event.target.classList.contains('delete-btn')) {
+        const productId = event.target.closest('.card').querySelector('p').textContent.replace('ID: ', '');
+        products = deleteProduct(productId, products);
+        renderProducts(products, productList, emptyMessage);
+        updateToast('Product deleted successfully.');
+    } else if (event.target.classList.contains('edit-btn')) {
+        const productId = event.target.closest('.card').querySelector('p').textContent.replace('ID: ', '');
+        const productToEdit = products.find(p => p.id === productId);
+        openEditModal(productToEdit, form, modal);
+    }
+});
+
+
+renderProducts(products, productList, emptyMessage);
+
+
+totalPriceEl.textContent = updateTotalPrice(products);
