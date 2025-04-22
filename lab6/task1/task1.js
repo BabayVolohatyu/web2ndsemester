@@ -64,7 +64,7 @@ function openEditModal(product, form, modal) {
     modal.classList.remove('hidden');
 }
 
-function handleSubmit(e, form, products, modal) {
+function handleSubmit(e, form, products, modal, toast) {
     e.preventDefault();
     const id = form['product-id'].value || Date.now().toString();
     const name = form['product-name'].value;
@@ -76,7 +76,7 @@ function handleSubmit(e, form, products, modal) {
         const updatedProducts = updateProductList(id, name, price, category, imageData, products);
         renderProducts(updatedProducts, productList, emptyMessage);
         const toastMessage = updatedProducts.some(p => p.id === id) ? `Product updated: ${id} - ${name}` : 'Product added successfully.';
-        updateToast(toastMessage);
+        updateToast(toast, toastMessage);
         modal.classList.add('hidden');
     });
 }
@@ -94,7 +94,7 @@ function updateProductList(id, name, price, category, imageData, products) {
     return [...products];
 }
 
-function updateToast(message) {
+function updateToast(toast, message) {
     toast.textContent = message;
     toast.classList.remove('hidden');
     setTimeout(() => toast.classList.add('hidden'), 3000);
